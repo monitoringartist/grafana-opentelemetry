@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    volumes:
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/dashboards:/provisioning/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+      - pyroscope
+      - opentelemetry-collector
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    command: 
+      - "--web.enable-remote-write-receiver"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:latest
+    command: 
+      - "-config.file=/etc/tempo.yaml"
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo.yaml
+
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    volumes:
+      - ./loki/loki.yaml:/etc/loki/loki.yaml
+        #ports:
+        #- 3100:3100
+    command: 
+      - "-config.file=/etc/loki/loki.yaml"
+
+  pyroscope:
+    container_name: pyroscope
+    image: pyroscope/pyroscope:latest
+    #ports:
+    # - 4040:4040
+    command:
+      - "server"
+    volumes:
+      - ./pyroscope/server.yaml:/etc/pyroscope/server.yaml
+
+  opentelemetry-collector:
+    container_name: opentelemetry-collector
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - ./openetelemetry-collector/otel-config.yaml:/etc/otel-config.yaml
+    command:
+      - "--config=/etc/otel-config.yaml"
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+

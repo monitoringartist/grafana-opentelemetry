@@ -1,0 +1,9 @@
+ports:
+  - port: 3000  # grafana
+    onOpen: open-browser
+    visibility: public
+
+tasks:
+  - name: docker-compose
+    init:
+      docker-compose up -d

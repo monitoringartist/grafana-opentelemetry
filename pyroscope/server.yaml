@@ -1,0 +1,9 @@
+storage-path: "/var/lib/pyroscope"
+
+retention: 360h # 15 days
+exemplars-retention: 72h # 3 days
+
+scrape-configs:
+  job-name: pyroscope
+  scrape-interval: 10s
+  enabled-profiles: [cpu, mem]
