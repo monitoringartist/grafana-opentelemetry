@@ -60,7 +60,7 @@ services:
     container_name: opentelemetry-collector
     image: otel/opentelemetry-collector-contrib:latest
     volumes:
-      - ./openetelemetry-collector/otel-config.yaml:/etc/otel-config.yaml
+      - ./opentelemetry-collector/otel-config.yaml:/etc/otel-config.yaml
     command:
       - "--config=/etc/otel-config.yaml"
     depends_on:

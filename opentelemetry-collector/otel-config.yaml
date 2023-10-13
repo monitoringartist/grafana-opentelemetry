@@ -79,7 +79,7 @@ exporters:
       insecure: true
   loki:
     endpoint: http://loki:3100/loki/api/v1/push
-  logging:
+  debug:
     verbosity: detailed
     sampling_initial: 2
     sampling_thereafter: 200

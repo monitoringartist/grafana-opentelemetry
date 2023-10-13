@@ -15,9 +15,12 @@ datasources:
     nodeGraph:
       enabled: true
     tracesToLogsV2:
-      customQuery: false
+      customQuery: true
+      query: '{appname="grafana"} |~ "\\\\\"traceID\\\\\":\\\\\"$${__trace.traceId}\\\\"'
+      spanEndTimeShift: 1m
+      spanStartTimeShift: -1m
       datasourceUid: loki
-      filterByTraceID: true
+      filterByTraceID: false
     lokiSearch:
       datasourceUid: loki
    
