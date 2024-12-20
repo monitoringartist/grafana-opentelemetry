@@ -172,7 +172,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum by(level) (\r\n  count_over_time(\r\n    {\r\n      appname=\"grafana\",\r\n      level=~\"$level\"\r\n    }\r\n    [$__interval]\r\n  )\r\n)",
+          "expr": "sum by(level) (\r\n  count_over_time(\r\n    {\r\n      service_name=\"grafana\",\r\n      level=~\"$level\"\r\n    }\r\n    [$__interval]\r\n  )\r\n)",
           "legendFormat": "{{level}}",
           "queryType": "range",
           "refId": "A",
@@ -212,7 +212,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{\r\n  appname=\"grafana\",\r\n  level=~\"$level\"\r\n}\r\n| json\r\n| line_format \"{{.body}}\"",
+          "expr": "{\r\n  service_name=\"grafana\",\r\n  level=~\"$level\"\r\n}",
           "legendFormat": "",
           "maxLines": 100,
           "queryType": "range",
@@ -338,7 +338,7 @@
         "query": {
           "label": "level",
           "refId": "LokiVariableQueryEditor-VariableQuery",
-          "stream": "{appname=\"grafana\"}",
+          "stream": "{service_name=\"grafana\"}",
           "type": 1
         },
         "refresh": 1,

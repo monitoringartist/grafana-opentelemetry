@@ -57,16 +57,11 @@ processors:
     send_batch_size: 8192
     timeout: 1s
     send_batch_max_size: 0
-  attributes:
-    actions:
-      - action: insert
-        key: loki.attribute.labels
-        value: appname, hostname
   resource:
     attributes:
       - action: insert
-        key: loki.format
-        value: json
+        key: service.name
+        value: grafana
 
 exporters:
   prometheusremotewrite:
@@ -77,8 +72,10 @@ exporters:
     endpoint: tempo:4317
     tls:
       insecure: true
-  loki:
-    endpoint: http://loki:3100/loki/api/v1/push
+  otlphttp:
+    endpoint: http://loki:3100/otlp
+    tls:
+      insecure: true
   debug:
     verbosity: detailed
     sampling_initial: 2
@@ -96,8 +93,8 @@ service:
       exporters: [otlp]
     logs:
       receivers: [tcplog]
-      processors: [memory_limiter, attributes, resource, batch]
-      exporters: [loki]
+      processors: [memory_limiter, resource, batch]
+      exporters: [otlphttp, debug]
   extensions: [health_check]
   telemetry:
     metrics:
