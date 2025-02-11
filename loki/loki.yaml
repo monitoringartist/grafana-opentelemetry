@@ -55,3 +55,4 @@ distributor:
       - "service.instance.id"
       - "service.name"
       - "service.namespace"
+
