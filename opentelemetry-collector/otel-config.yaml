@@ -68,11 +68,16 @@ exporters:
     endpoint: http://prometheus:9090/api/v1/write
     tls:
       insecure: true
-  otlp:
+  otlphttp/prometheus:
+    endpoint: http://prometheus:9090/api/v1/otlp
+    encoding: proto
+    tls:
+      insecure: true
+  otlp/tempo:
     endpoint: tempo:4317
     tls:
       insecure: true
-  otlphttp:
+  otlphttp/loki:
     endpoint: http://loki:3100/otlp
     tls:
       insecure: true
@@ -86,20 +91,32 @@ service:
     metrics:
       receivers: [prometheus]
       processors: [memory_limiter, batch]
-      exporters: [prometheusremotewrite]
+      exporters: [otlphttp/prometheus] # prometheusremotewrite
     traces:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [otlp]
+      exporters: [otlp/tempo]
     logs:
       receivers: [tcplog]
       processors: [memory_limiter, resource, batch]
-      exporters: [otlphttp, debug]
+      exporters: [otlphttp/loki]
   extensions: [health_check]
   telemetry:
+    resource:
+      service.name: grafana-opentelemetry/metrics
+      author: monitoriginartist
     metrics:
-      address: 127.0.0.1:8888
       level: detailed
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: 127.0.0.1
+                port: 8888
+                with_resource_constant_labels:
+                  included:
+                      - service.name
+                      - author
     logs:
       level: debug
       encoding: json

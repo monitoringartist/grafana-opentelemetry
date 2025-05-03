@@ -6,7 +6,7 @@ providers:
     folder: 'Provisioned dashboards'
     type: file
     updateIntervalSeconds: 60
-    allowUiUpdates: false
+    allowUiUpdates: true
     options:
       path: /provisioning/dashboards
       foldersFromFilesStructure: true
