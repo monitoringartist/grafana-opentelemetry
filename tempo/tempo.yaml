@@ -1,47 +1,47 @@
+stream_over_http_enabled: true
+
 server:
   http_listen_port: 3200
+  log_level: info
 
 distributor:
   receivers:
     otlp:
       protocols:
-        http:
-          endpoint: 0.0.0.0:4318
         grpc:
-          endpoint: 0.0.0.0:4317
-
-ingester:
-  max_block_duration: 5m 
-
-compactor:
-  compaction:
-    block_retention: 24h
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
 
 metrics_generator:
-  processor:
-    service_graphs:
-      wait: 10s
   registry:
     external_labels:
       source: tempo
+      cluster: docker-compose
   storage:
-    path: /tmp/tempo/generator/wal
+    path: /var/tempo/generator/wal
     remote_write:
       - url: http://prometheus:9090/api/v1/write
         send_exemplars: true
+
+query_frontend:
+  mcp_server:
+    enabled: true
 
 storage:
   trace:
     backend: local
     wal:
-      path: /tmp/tempo/wal
+      path: /var/tempo/wal
     local:
-      path: /tmp/tempo/blocks
+      path: /var/tempo/blocks
 
 overrides:
-  ingestion_rate_limit_bytes: 150000000
-  ingestion_burst_size_bytes: 200000000
-  max_bytes_per_trace: 50000000
-  metrics_generator_processors:
-    - service-graphs
-    - span-metrics
+  defaults:
+    metrics_generator:
+      processors: ["span-metrics", "service-graphs", "service-graphs-connection-info"]
+      generate_native_histograms: both
+
+
+usage_report:
+  reporting_enabled: false
