@@ -2,7 +2,7 @@ stream_over_http_enabled: true
 
 server:
   http_listen_port: 3200
-  log_level: info
+  log_level: error
 
 distributor:
   receivers:
@@ -12,6 +12,10 @@ distributor:
           endpoint: "0.0.0.0:4317"
         http:
           endpoint: "0.0.0.0:4318"
+  #log_received_spans:
+  #    enabled: true
+  #  log_discarded_spans:
+  #    enabled: true
 
 metrics_generator:
   registry:
@@ -32,7 +36,7 @@ storage:
   trace:
     backend: local
     wal:
-      path: /var/tempo/wal
+      path: /var/tempo/wal # where to store the wal locally
     local:
       path: /var/tempo/blocks
 
@@ -41,7 +45,6 @@ overrides:
     metrics_generator:
       processors: ["span-metrics", "service-graphs", "service-graphs-connection-info"]
       generate_native_histograms: both
-
 
 usage_report:
   reporting_enabled: false
